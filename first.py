@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 
 conn = sqlite3.connect('expense.sqlite3')
 c = conn.cursor()
@@ -13,7 +14,19 @@ c.execute("""CREATE TABLE IF NOT EXISTS expense (
 
 
 #Insert Data
-with conn:
-    command = 'INSERT INTO expense VALUES (?, ?, ?, ?, ?)' #SQL
-    c.execute(command, (None, '7-11' , 43, 'tofusan_soymilk_chocolate-cacao', '2024-10-19 11:11:11'))
-conn.commit() #Save data to database
+def insert_expense(title, price, others):
+    ts = datetime.now().strftime('%Y-%m-%d %H:%M:%S')               #Generate timestamp
+    with conn:
+        command = 'INSERT INTO expense VALUES (?, ?, ?, ?, ?)'      #SQL -- ? = Number of Field/Column when insert data
+        c.execute(command, (None, title , price, others, ts))
+    conn.commit()                                                   #Save data to database
+    print(f'saving completed at {ts}')
+
+#insert_expense('7-11', 20, 'ichitan_greetea')
+
+for i in range(3) :
+    print(f'####################{i+1}###########################')
+    title = input('title: ')
+    price = float(input('price: '))
+    others = input('detail: ')
+    insert_expense(title, price, others)
