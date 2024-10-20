@@ -1,6 +1,36 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+import sqlite3
+from datetime import datetime
+
+
+######################## SQL ########################
+conn = sqlite3.connect('expense.sqlite3')
+c = conn.cursor()
+
+c.execute("""CREATE TABLE IF NOT EXISTS expense (
+                ID      INTEGER PRIMARY KEY AUTOINCREMENT,  
+                title   TEXT,
+                price   REAL,
+                others  TEXT,
+                timestamp   TEXT )
+          """)
+
+
+#Insert Data
+def insert_expense(title, price, others):
+    ts = datetime.now().strftime('%Y-%m-%d %H:%M:%S')               #Generate timestamp
+    with conn:
+        command = 'INSERT INTO expense VALUES (?, ?, ?, ?, ?)'      #SQL -- ? = Number of Field/Column when insert data
+        c.execute(command, (None, title , price, others, ts))
+    conn.commit()                                                   #Save data to database -- Use when data in database has changed For example: if just only Query data no need to commit
+    print(f'saving completed at {ts}') 
+
+
+####################################################
+
+
 
 GUI = Tk()
 GUI.title('Expenses Tracker')
@@ -45,21 +75,29 @@ E3.pack()
 
 
 def save(event=None):
-    title  = v_title.get() 
-    price  = float(v_price.get())
-    others = v_others.get()
 
-    print(title, price, others)
+    #If there is no price value please popup message
+    if v_price.get() == '' :
+        E2.focus()
+        messagebox.showinfo("Please fill in the price information.")
 
-    #Clear values in form
-    v_title.set('') 
-    v_price.set('')
-    v_others.set('')
+    else :
+        title  = v_title.get() 
+        price  = float(v_price.get())
+        others = v_others.get()
 
-    #Make cursor mouse at title after clicking save
-    E1.focus()
+        print(title, price, others)
+        insert_expense(title, price, others)
 
-    # messagebox.showinfo('Message', title)
+        #Clear values in form
+        v_title.set('') 
+        v_price.set('')
+        v_others.set('')
+
+        #Make cursor mouse at title after clicking save
+        E1.focus()
+
+        # messagebox.showinfo('Message', title)
 
 
 #Using for pressing Enter button without clicking on it
@@ -69,5 +107,7 @@ E3.bind('<Return>', save) # Apply event=None in function "save" & '<Return>' = E
 #Create "Save" button
 B1 = ttk.Button(GUI, text = 'Save', command = save)
 B1.pack(ipadx = 20, ipady = 10, pady= 10)
+
+
 
 GUI.mainloop()
