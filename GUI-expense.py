@@ -138,6 +138,14 @@ B1.pack(ipadx = 20, ipady = 10, pady= 10)
 
 
 ###################### TAB2 ###################### 
+header = ['ID', 'title', 'price', 'others', 'timestamp']
+hwidth = [50, 200, 100, 200, 100]
 
+table = ttk.Treeview(T2, columns = header, show = 'headings', height = 20)
+table.pack()
+
+for h, w in zip(header, hwidth):
+    table.heading(h, text = h)
+    table.column(h, width= w)
 
 GUI.mainloop()
