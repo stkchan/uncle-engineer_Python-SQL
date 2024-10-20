@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 import sqlite3
 from datetime import datetime
+import os
 
 
 ######################## SQL ########################
@@ -39,37 +40,64 @@ GUI.geometry('700x600')
 font1 = ('Google Sans', 20)
 font2 = ('Angsana New', 30)
 
-##################################
-L = Label(GUI, text = 'Expenses Tracker', font = ('Google Sans', 20, 'bold'))
+#Creating Tab name & icon
+path = os.getcwd() #Check current folder
+tab = ttk.Notebook(GUI)
+tab.pack(fill = BOTH, expand = 1)
+
+T1 = Frame(tab)
+T2 = Frame(tab)
+
+icon_t1 = os.path.join(path, 'picture-1.png') #Get picuture file
+icon_t2 = os.path.join(path, 'picture-2.png') #Get picuture file
+iconimage_t1 = PhotoImage(file = icon_t1)
+iconimage_t2 = PhotoImage(file = icon_t2)
+
+
+tab.add(T1, text = 'Expense Record',  image = iconimage_t1, compound = 'left') #compound = define where the icon should be located
+tab.add(T2, text = 'Expense History', image = iconimage_t2, compound = 'left')
+
+
+#Creating Icon
+path =  os.getcwd() #Check current folder
+icon =  os.path.join(path, 'wallet-1.png')
+iconimage = PhotoImage(file = icon)
+
+L = Label(T1, image = iconimage)
+L.pack()
+
+
+#Creating Label
+L = Label(T1, text = 'Expenses Tracker', font = ('Google Sans', 20, 'bold'))
 L.pack(pady = 10)
 # L.place(x = 300, y = 300)
 # L.grid(row = 0, column = 0)
 
 
 #Title
-L = Label(GUI, text = 'title', font = font2)
+L = Label(T1, text = 'title', font = font2)
 L.pack()
 
 v_title = StringVar()
-E1 = ttk.Entry(GUI, textvariable = v_title, font = font1, width = 20)
+E1 = ttk.Entry(T1, textvariable = v_title, font = font1, width = 20)
 E1.pack()
 
 
 #Price
-L = Label(GUI, text = 'price', font = font2)
+L = Label(T1, text = 'price', font = font2)
 L.pack()
 
 v_price = StringVar()
-E2 = ttk.Entry(GUI, textvariable = v_price, font = font1, width = 20)
+E2 = ttk.Entry(T1, textvariable = v_price, font = font1, width = 20)
 E2.pack()
 
 
 #Others
-L = Label(GUI, text = 'others', font = font2)
+L = Label(T1, text = 'others', font = font2)
 L.pack()
 
 v_others = StringVar()
-E3 = ttk.Entry(GUI, textvariable = v_others, font = font1, width = 20)
+E3 = ttk.Entry(T1, textvariable = v_others, font = font1, width = 20)
 E3.pack()
 
 
@@ -105,9 +133,11 @@ E3.bind('<Return>', save) # Apply event=None in function "save" & '<Return>' = E
 
 
 #Create "Save" button
-B1 = ttk.Button(GUI, text = 'Save', command = save)
+B1 = ttk.Button(T1, text = 'Save', command = save)
 B1.pack(ipadx = 20, ipady = 10, pady= 10)
 
+
+###################### TAB2 ###################### 
 
 
 GUI.mainloop()
