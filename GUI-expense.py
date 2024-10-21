@@ -181,19 +181,72 @@ for h, w in zip(header, hwidth):
 
 ###################### DELETE ######################
 def delete_table(event=None):
-    # print('delete..')
-    select = table.selection()
-    id   = table.item(select)['values'][0]
-    # print(id)
-    choice = messagebox.askyesno('Delete Data', 'Do you want to delete data?')
-    # print(choice)
-    if choice == True:
-        delete_expense(id)
-        update_table()
-    else:
-        print("Nothing happened")
+    try:
+        # print('delete..')
+        select = table.selection()
+        id   = table.item(select)['values'][0]
+        # print(id)
+        choice = messagebox.askyesno('Delete Data', 'Do you want to delete data?')
+        # print(choice)
+        if choice == True:
+            delete_expense(id)
+            update_table()
+        else:
+            print("Nothing happened")
+
+    except Exception as e:
+        print(f'Error = {e}')
+        messagebox.showwarning('Select data', 'Please select data you want to delete')
 
 table.bind('<Delete>', delete_table)
+
+
+###################### Update Data ######################
+def update_data(event=None):
+    try:
+        select = table.selection()
+        data   = table.item(select)['values']
+        print(data)
+
+        GUI2 = Toplevel()
+        GUI2.title('Edit the data entry')
+        GUI2.geometry('700x600')
+
+        #Title
+        L = Label(GUI2, text = 'title', font = font2)
+        L.pack()
+
+        v_title_e = StringVar()
+        E1 = ttk.Entry(GUI2, textvariable = v_title_e, font = font1, width = 20)
+        E1.pack()
+
+
+        #Price
+        L = Label(GUI2, text = 'price', font = font2)
+        L.pack()
+
+        v_price_e = StringVar()
+        E2 = ttk.Entry(GUI2, textvariable = v_price_e, font = font1, width = 20)
+        E2.pack()
+
+
+        #Others
+        L = Label(GUI2, text = 'others', font = font2)
+        L.pack()
+
+        v_others_e = StringVar()
+        E3 = ttk.Entry(GUI2, textvariable = v_others_e, font = font1, width = 20)
+        E3.pack()
+
+
+
+    except Exception as e:
+        print(f'Error = {e}')
+        messagebox.showwarning('Select data', 'Please select data you want to delete')
+
+table.bind('<Double-1>', update_data)
+
+
 
 update_table()
 GUI.mainloop()
