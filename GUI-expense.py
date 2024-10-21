@@ -46,6 +46,13 @@ def delete_expense(id):
     conn.commit()
 
 
+def update_expense(id, field, value):
+    with conn:
+        command = 'UPDATE expense SET {} = (?) WHERE ID = (?)'.format(field)
+        c.execute(command, (value, id))
+    conn.commit()                                                   #Save data to database
+
+
 #Update data in table
 def update_table():
     table.delete(*table.get_children()) #Clear data in table
@@ -217,6 +224,7 @@ def update_data(event=None):
         L.pack()
 
         v_title_e = StringVar()
+        v_title_e.set(data[1])
         E1 = ttk.Entry(GUI2, textvariable = v_title_e, font = font1, width = 20)
         E1.pack()
 
@@ -226,6 +234,7 @@ def update_data(event=None):
         L.pack()
 
         v_price_e = StringVar()
+        v_price_e.set(data[2])
         E2 = ttk.Entry(GUI2, textvariable = v_price_e, font = font1, width = 20)
         E2.pack()
 
@@ -235,9 +244,30 @@ def update_data(event=None):
         L.pack()
 
         v_others_e = StringVar()
+        v_others_e.set(data[3])
         E3 = ttk.Entry(GUI2, textvariable = v_others_e, font = font1, width = 20)
         E3.pack()
 
+
+        #Create "Save Update Data" button
+        def edit():
+            id = data[0] #Get id
+            title_e  = v_title_e.get()
+            price_e  = v_price_e.get()
+            others_e = v_others_e.get()
+            update_expense(id, 'title',  title_e)
+            update_expense(id, 'price',  price_e)
+            update_expense(id, 'others', others_e)
+            update_table() #Update new data in table
+            GUI2.destroy() #Close popup after clicking "Save" button
+
+
+        B1 = ttk.Button(GUI2, text = 'Save', command = edit)
+        B1.pack(ipadx = 20, ipady = 10, pady= 10)
+
+
+        
+        GUI2.mainloop()
 
 
     except Exception as e:
