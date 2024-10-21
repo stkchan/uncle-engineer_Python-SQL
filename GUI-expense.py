@@ -29,6 +29,31 @@ def insert_expense(title, price, others):
     print(f'saving completed at {ts}') 
 
 
+#Query Data
+def view_expense():
+    with conn:
+        command = 'SELECT * FROM expense' 
+        c.execute(command)
+        result = c.fetchall()
+    return result
+
+
+#Delete Data
+def delete_expense(id):
+    with conn:
+        command = 'DELETE FROM expense WHERE id = (?)'
+        c.execute(command, ([id]))
+    conn.commit()
+
+
+#Update data in table
+def update_table():
+    table.delete(*table.get_children()) #Clear data in table
+    for i in view_expense():
+        table.insert('', 'end', values = i)
+
+# table.insert('', 'end', values = [1, '7-11', '12', 'drinking water', '2024-10-20 20:45:45'])
+
 ####################################################
 
 
@@ -37,11 +62,16 @@ GUI = Tk()
 GUI.title('Expenses Tracker')
 GUI.geometry('700x600')
 
+
 font1 = ('Google Sans', 20)
 font2 = ('Angsana New', 30)
 
 #Creating Tab name & icon
 path = os.getcwd() #Check current folder
+
+mainicon = os.path.join(path, 'picture-3.ico')
+GUI.iconbitmap(mainicon)
+
 tab = ttk.Notebook(GUI)
 tab.pack(fill = BOTH, expand = 1)
 
@@ -124,7 +154,7 @@ def save(event=None):
 
         #Make cursor mouse at title after clicking save
         E1.focus()
-
+        update_table() #Update data into table when click "save" button
         # messagebox.showinfo('Message', title)
 
 
@@ -137,15 +167,33 @@ B1 = ttk.Button(T1, text = 'Save', command = save)
 B1.pack(ipadx = 20, ipady = 10, pady= 10)
 
 
-###################### TAB2 ###################### 
+###################### TAB2 ######################
 header = ['ID', 'title', 'price', 'others', 'timestamp']
-hwidth = [50, 200, 100, 200, 100]
+hwidth = [50, 200, 100, 200, 120]
 
 table = ttk.Treeview(T2, columns = header, show = 'headings', height = 20)
 table.pack()
 
 for h, w in zip(header, hwidth):
     table.heading(h, text = h)
-    table.column(h, width= w)
+    table.column(h, width = w)
 
+
+###################### DELETE ######################
+def delete_table(event=None):
+    # print('delete..')
+    select = table.selection()
+    id   = table.item(select)['values'][0]
+    # print(id)
+    choice = messagebox.askyesno('Delete Data', 'Do you want to delete data?')
+    # print(choice)
+    if choice == True:
+        delete_expense(id)
+        update_table()
+    else:
+        print("Nothing happened")
+
+table.bind('<Delete>', delete_table)
+
+update_table()
 GUI.mainloop()
